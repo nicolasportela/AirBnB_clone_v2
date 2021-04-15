@@ -5,8 +5,6 @@ then
     sudo apt-get -y update
     sudo apt-get -y upgrade
     sudo apt-get -y install nginx
-    ufw allow 'Nginx HTTP'
-    service nginx start
 fi
 mkdir -p /data/
 mkdir -p /data/web_static/
