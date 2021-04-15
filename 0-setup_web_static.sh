@@ -12,7 +12,7 @@ mkdir -p /data/web_static/releases/
 mkdir -p /data/web_static/shared/
 mkdir -p /data/web_static/releases/test/
 echo "Testing" > /data/web_static/releases/test/index.html
-ln -sf /data/web_static/releases/test/ /data/web_static/current
+ln -sf /data/web_static/releases/test /data/web_static/current
 sudo chown -R "ubuntu:ubuntu" /data/
 new_string="\\\n\tlocation /hbnb_static {\n\t\t alias /data/web_static/current/;\n\t}\n"
 
