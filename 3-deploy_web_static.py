@@ -47,8 +47,7 @@ def do_deploy(archive_path):
 def deploy():
     """Full deployment"""
     try:
-        name = do_pack()
-        answer = do_deploy(name)
-        return True
+        path = do_pack()
+        return do_deploy(path)
     except:
         return False
