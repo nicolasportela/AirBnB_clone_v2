@@ -11,15 +11,15 @@ env.user = "ubuntu"
 
 def do_pack():
     """function to compress file"""
-    local("mkdir -p versions")
-    # create the name of file in str format from datetime.now
-    name = "web_static_" + datetime.strftime(datetime.now(),
-                                             "%Y%m%d%H%M%S") + ".tgz"
+    local("mkdir -p versions/")
+    now = datetime.now()
+    date_time = now.strftime("%Y%m%d%H%M%S")
+    name = "versions/web_static_" + date_time
     try:
-        local("tar -czvf ./versions/{} ./web_static" .format(name))
-        return(name)
-    except:
-        return(None)
+        local("tar -cvzf " + name + ".tgz web_static")
+        return "{}.tgz".format(name)
+    except Exception:
+        return None
 
 
 def do_deploy(archive_path):
@@ -28,19 +28,17 @@ def do_deploy(archive_path):
         return False
     try:
         put(archive_path, "/tmp/")
-        """ file_name name of file with .tgz """
-        file_name = archive_path.split("/")[1]
-        """ file_name2 name of file without .tgz """
-        file_name2 = file_name.split(".")[0]
-        """ final_name name of path of directory """
-        final_name = "/data/web_static/releases/" + file_name2 + "/"
-        run("mkdir -p " + final_name)
-        run("tar -xzf /tmp/" + file_name + " -C " + final_name)
-        run("rm /tmp/" + file_name)
-        run("mv " + final_name + "web_static/* " + final_name)
-        run("rm -rf " + final_name + "web_static")
+        name = archive_path.split('/')[1].split('.')[0]
+        run("mkdir -p /data/web_static/releases/{}".format(name))
+        run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}"
+            .format(name, name))
+        run("rm /tmp/{}.tgz".format(name))
+        run("mv /data/web_static/releases/{}/web_static/* \
+            /data/web_static/releases/{}/".format(name, name))
+        run("rm -rf /data/web_static/releases/{}/web_static".format(name))
         run("rm -rf /data/web_static/current")
-        run("ln -s " + final_name + " /data/web_static/current")
+        run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
+            .format(name))
         return True
     except:
         return False
