@@ -14,9 +14,9 @@ def do_pack():
     local("mkdir -p versions")
     # create the name of file in str format from datetime.now
     now = datetime.now()
-    name = "web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
+    name = "versions/web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
     try:
-        local("tar -czvf versions/{} web_static" .format(name))
+        local("tar -czvf" + name + "web_static")
         return name
     except:
         return None
