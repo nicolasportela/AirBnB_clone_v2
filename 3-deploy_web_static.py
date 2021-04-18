@@ -50,3 +50,4 @@ def deploy():
     if filepath:
         return do_deploy(filepath)
     else:
+        return False
