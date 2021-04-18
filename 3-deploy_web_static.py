@@ -46,7 +46,7 @@ def do_deploy(archive_path):
 
 def deploy():
     """Full deployment"""
-    file_path = do_pack()
-    if file_path is None:
+    try:
+        return do_deploy(do_pack())
+    except TypeError:
         return False
-    return do_deploy(file_path)
