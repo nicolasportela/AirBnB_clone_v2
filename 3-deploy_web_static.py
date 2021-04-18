@@ -13,13 +13,12 @@ def do_pack():
     """function to compress file"""
     local("mkdir -p versions")
     # create the name of file in str format from datetime.now
-    now = datetime.now()
-    date_time = now.strftime("%Y%m%d%H%M%S")
-    name = "web_static_" + date_time + ".tgz"
+    name = "web_static_" + datetime.strftime(datetime.now(),
+                                             "%Y%m%d%H%M%S") + ".tgz"
     try:
         local("tar -czvf ./versions/{} ./web_static" .format(name))
         return(name)
-    except:
+    except Exception:
         return(None)
 
 
