@@ -16,7 +16,7 @@ def do_pack():
     now = datetime.now()
     name = "versions/web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
     try:
-        local("tar -czvf" + name + "web_static")
+        local("tar -czvf " + name + " web_static")
         return name
     except:
         return None
