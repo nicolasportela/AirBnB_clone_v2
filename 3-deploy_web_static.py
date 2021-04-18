@@ -11,15 +11,15 @@ env.user = "ubuntu"
 
 def do_pack():
     """function to compress file"""
-    local("mkdir -p versions/")
-    now = datetime.now()
-    date_time = now.strftime("%Y%m%d%H%M%S")
-    name = "versions/web_static_" + date_time
+    local("mkdir -p versions")
+    # create the name of file in str format from datetime.now
+    name = "web_static_" + datetime.strftime(datetime.now(),
+                                             "%Y%m%d%H%M%S") + ".tgz"
     try:
-        local("tar -cvzf " + name + ".tgz web_static")
-        return "{}.tgz".format(name)
-    except Exception:
-        return None
+        local("tar -czvf versions/{} web_static" .format(name))
+        return(name)
+    except:
+        return(None)
 
 
 def do_deploy(archive_path):
