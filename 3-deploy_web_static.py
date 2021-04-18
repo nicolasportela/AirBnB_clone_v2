@@ -1,54 +1,70 @@
 #!/usr/bin/python3
-"""Fabric script that creates and distributes an archive
-to your web servers, using the function deploy"""
+"""
+Archive and deploy the contents of web_static
+"""
 
-from fabric.api import local, put, env, run
-from os import path
-from datetime import datetime
-env.hosts = ['34.74.134.187', '34.74.176.2']
-env.user = "ubuntu"
+from os.path import basename, isfile, join, sep, splitext
+from shlex import quote
+from time import strftime
+from fabric.api import env, local, put, run
+
+env.hosts = ['34.75.15.109', '35.227.52.42']
 
 
 def do_pack():
-    """function to compress file"""
-    local("mkdir -p versions")
-    # create the name of file in str format from datetime.now
-    name = "web_static_" + datetime.strftime(datetime.now(),
-                                             "%Y%m%d%H%M%S") + ".tgz"
-    try:
-        local("tar -czvf ./versions/{} ./web_static" .format(name))
-        return(name)
-    except:
-        return(None)
+    """
+    Archive the contents of web_static
+    """
+    now = strftime('%Y%m%d%H%M%S')
+    tgz = join('versions', 'web_static_{}.tgz'.format(now))
+    local('mkdir -p versions')
+    local('tar -czf {} web_static'.format(quote(tgz)))
+    return tgz if isfile(tgz) else None
 
 
 def do_deploy(archive_path):
-    """function to distribute an archive to web server"""
-    if path.exists(archive_path):
-        try:
-            put(archive_path, "/tmp/")
-            name = archive_path.split('/')[1].split('.')[0]
-            run("mkdir -p /data/web_static/releases/{}".format(name))
-            run("tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}"
-                .format(name, name))
-            run("rm /tmp/{}.tgz".format(name))
-            run("mv /data/web_static/releases/{}/web_static/* \
-                /data/web_static/releases/{}/".format(name, name))
-            run("rm -rf /data/web_static/releases/{}/web_static".format(name))
-            run("rm -rf /data/web_static/current")
-            run("ln -s /data/web_static/releases/{}/ /data/web_static/current"
-                .format(name))
-            return True
-        except:
-            return False
-    else:
-        return False
+    """
+    Deploy an archive to my Holberton web servers
+    """
+    if isfile(archive_path):
+        source_name = basename(archive_path)
+        source_path = join(sep, 'tmp', source_name)
+        dest_name = splitext(source_name)[0]
+        dest_path = join(sep, 'data', 'web_static', 'releases', dest_name)
+        put(archive_path, source_path)
+        run('mkdir -p {}'.format(
+            quote(dest_path)
+        ))
+        run('tar -xzf {} -C {}'.format(
+            quote(source_path),
+            quote(dest_path)
+        ))
+        run('rm -f {}'.format(
+            quote(source_path)
+        ))
+        run('mv {} {}'.format(
+            join(quote(join(dest_path, 'web_static')), '*'),
+            quote(join(dest_path, ''))
+        ))
+        run('rm -rf {}'.format(
+            quote(join(dest_path, 'web_static'))
+        ))
+        run('rm -rf {}'.format(
+            quote(join(sep, 'data', 'web_static', 'current'))
+        ))
+        run('ln -s {} {}'.format(
+            quote(dest_path),
+            quote(join(sep, 'data', 'web_static', 'current'))
+        ))
+        return True
+    return False
 
 
 def deploy():
-    """Full deployment"""
-    filepath = do_pack()
-    if filepath:
-        return do_deploy(filepath)
-    else:
+    """
+    Archive the contents of web_static and deploy it to my web servers
+    """
+    try:
+        return do_deploy(do_pack())
+    except TypeError:
         return False
