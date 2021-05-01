@@ -31,4 +31,5 @@ def python(text='is cool'):
     text = text.replace("_", " ")
     return 'Python %s' % text
 
-app.run()
+if __name__ == '__main__':
+    app.run()

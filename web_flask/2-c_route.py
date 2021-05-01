@@ -23,4 +23,5 @@ def c(text):
     text = text.replace("_", " ")
     return 'C %s' % text
 
-app.run()
+if __name__ == '__main__':
+    app.run()

@@ -16,4 +16,5 @@ def hbnb():
     """function 2 to display a message on a given route"""
     return 'HBNB'
 
-app.run()
+if __name__ == '__main__':
+    app.run()
