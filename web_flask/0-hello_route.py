@@ -10,4 +10,5 @@ def index():
     """function to display a message on a given route"""
     return 'Hello HBNB!'
 
-app.run()
+if __name__ == '__main__':
+    app.run()
